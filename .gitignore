@@ -1,0 +1,42 @@
+# * .gitignore
+
+# * Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.egg-info/
+*.egg
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.egg-info/
+*.egg
+     
+# * Environments
+.env
+.venv/
+env/
+venv/
+ENV/
+     
+# * Discord
+config.json
+     
+# * IDEs
+.vscode/
+.idea/
+     
+# * OS
+.DS_Store
