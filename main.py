@@ -1,3 +1,5 @@
+# Description: This is the main file of the bot, it will be used to start the bot and load the cogs.
+
 # * Import the necessary libraries
 import os
 from dotenv import load_dotenv
@@ -8,29 +10,27 @@ from discord.ext import commands
 
 # * Load the environment variables
 load_dotenv()
+
 DISCORD_TOKEN = os.getenv('TOKEN')
-DATABASE_URL = os.getenv('DATABASE_URL')
 PREFIX = os.getenv('PREFIX')
 
-# TODO: Add the database connection using pymongo
-
 # * Create the cog file manager
-class Cogs(commands.Cog):
+class CogManager(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @commands.Cog.listener(name='on_ready')
-    async def loader(self) -> None:
+    async def load(self) -> None:
         for root, _, files in os.walk('./cogs'):
+            if 'utils' in root:
+                continue
             for filename in files:
                 if filename.endswith('.py'):
                     try:
                         path = os.path.join(root, filename)[len("./cogs/"):][:-3].replace(os.path.sep, '.')
-                        await self.bot.load_extension(f'cogs.{path}')
+                        await luffy.load_extension(f'cogs.{path}')
                         print(f'🟢 SUCCES | Loaded the cog: {filename}')
                     except Exception as e:
                         print(f'❌ ERROR | {e}')
-
 
 # * Creation of the bot class
 class Luffy(commands.Bot):
@@ -38,15 +38,13 @@ class Luffy(commands.Bot):
         super().__init__(command_prefix=PREFIX, intents=discord.Intents.all()) # type: ignore
 
     async def setup_hook(self) -> None:
-        await self.add_cog(Cogs(self))
-
+        await CogManager(self).load()
         await self.tree.sync()
 
     async def on_ready(self) -> None:
-        await self.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name=f"Hello world!"))
+        await self.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name=f"Thousand Sunny!"))
 
         print(f'Logged in as {self.user}')
-        print(f'--------------------------')
 
     async def on_connect(self) -> None:
         await self.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name=f"Initialisation..."))
