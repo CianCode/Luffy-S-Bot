@@ -1,13 +1,11 @@
 # Description: Add reputation points to a member
 
 # * Import the necessary discord libraries
-from code import interact
 import discord
-from discord import Interaction, app_commands
+from discord import app_commands
 from discord.ext import commands
 
 # * Import the necessary libraries
-from ..utils.database import reputation_roles
 from ..utils.database import reputation_members
 from ..utils import colorEmbed
 
@@ -75,7 +73,7 @@ class ReputationMembers(commands.Cog):
         reputation = await reputation_members.find_one({"_memberID": selected_member.id})
         if reputation is not None:
             # * Create the embed
-            ShowReputationEmbed = discord.Embed(description=f"{selected_member.mention} a {reputation['_reputationPoints']} points de réputation", color=colorEmbed.Green)
+            ShowReputationEmbed = discord.Embed(description=f"{selected_member.mention} a {reputation['_reputationPoints']} points de réputation", color=colorEmbed.Yellow)
             await interaction.response.send_message(embed=ShowReputationEmbed, ephemeral=False)
     
 
