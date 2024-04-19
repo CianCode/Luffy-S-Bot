@@ -1,4 +1,4 @@
-# * .gitignore
+# Description: This file is used to store the files and directories that should be ignored by git.
 
 # * Python
 __pycache__/
