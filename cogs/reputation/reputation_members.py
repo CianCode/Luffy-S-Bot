@@ -28,6 +28,7 @@ class ReputationMembers(commands.Cog):
         # * Check if the member already exists
         if await reputation_members.find_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id}) is None:
             await reputation_members.insert_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id, "_reputationPoints": amount})
+            await update_reputation_role(interaction.guild, selected_member)
             await interaction.response.send_message(embed=CreateMembersEmbed, ephemeral=False)
             return
         
@@ -36,6 +37,7 @@ class ReputationMembers(commands.Cog):
         quantity = reputation["_reputationPoints"] # type: ignore
         quantity += amount
         await reputation_members.replace_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id}, {"_guildID": interaction.guild_id, "_memberID": selected_member.id, "_reputationPoints": quantity})
+        await update_reputation_role(interaction.guild, selected_member)
         await interaction.response.send_message(embed=AddReputationEmbed, ephemeral=False)
 
     # * Remove reputation points from a member
@@ -57,6 +59,7 @@ class ReputationMembers(commands.Cog):
         quantity = reputation["_reputationPoints"] # type: ignore
         quantity -= amount
         await reputation_members.replace_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id}, {"_guildID": interaction.guild_id, "_memberID": selected_member.id, "_reputationPoints": quantity})
+        highestRole = await update_reputation_role(interaction.guild, selected_member)
         await interaction.response.send_message(embed=RemoveReputationEmbed, ephemeral=False)
 
     # * Show the reputation points of a member (default is the author)
@@ -78,7 +81,34 @@ class ReputationMembers(commands.Cog):
             ShowReputationEmbed = discord.Embed(description=f"{selected_member.mention} a {reputation['_reputationPoints']} points de réputation", color=colorEmbed.Yellow)
             await interaction.response.send_message(embed=ShowReputationEmbed, ephemeral=False)
     
+    # * Leaderboard of the members with the most reputation points
+    @app_commands.command(name="reputation_leaderboard", description="Afficher le classement des membres avec le plus de points de réputation")
+    async def reputation_leaderboard(self, interaction: discord.Interaction):
+        
+        # * Create the embed
+        ErrorEmbed = discord.Embed(description="Il n'y a aucun membre pour le moment", color=colorEmbed.Red)
 
+        # * Get the members
+        members = await reputation_members.find({"_guildID": interaction.guild_id}).to_list(length=None)
+
+        # * Check if there are no members
+        if not members:
+            await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
+            return
+
+        # * Sort the members by reputation points
+        members = sorted(members, key=lambda member: member["_reputationPoints"], reverse=True)
+
+        # * Create the embed
+        LeaderboardEmbed = discord.Embed(title="Classement des membres avec le plus de points de réputation", color=colorEmbed.Yellow)
+        for i, member in enumerate(members):
+            member_id = member["_memberID"]
+            reputation_points = member["_reputationPoints"]
+            member = interaction.guild.get_member(member_id) # type: ignore
+            if member:
+                LeaderboardEmbed.add_field(name=f"{i+1}. {member.display_name}", value=f"Points de réputation: {reputation_points}", inline=False)
+        
+        await interaction.response.send_message(embed=LeaderboardEmbed, ephemeral=False)
         
 
 async def setup(bot):
