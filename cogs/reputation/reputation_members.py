@@ -24,16 +24,16 @@ class ReputationMembers(commands.Cog):
         AddReputationEmbed = discord.Embed(description=f"Vous venez d'ajouter {amount} points de réputation à {selected_member.mention}", color=colorEmbed.Green)
         
         # * Check if the member already exists
-        if await reputation_members.find_one({"_memberID": selected_member.id}) is None:
-            await reputation_members.insert_one({"_memberID": selected_member.id, "_reputationPoints": amount})
+        if await reputation_members.find_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id}) is None:
+            await reputation_members.insert_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id, "_reputationPoints": amount})
             await interaction.response.send_message(embed=CreateMembersEmbed, ephemeral=False)
             return
         
         # * Add the reputation points
-        reputation = await reputation_members.find_one({"_memberID": selected_member.id})
+        reputation = await reputation_members.find_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id})
         quantity = reputation["_reputationPoints"] # type: ignore
         quantity += amount
-        await reputation_members.replace_one({"_memberID": selected_member.id}, {"_memberID": selected_member.id, "_reputationPoints": quantity})
+        await reputation_members.replace_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id}, {"_guildID": interaction.guild_id, "_memberID": selected_member.id, "_reputationPoints": quantity})
         await interaction.response.send_message(embed=AddReputationEmbed, ephemeral=False)
 
     # * Remove reputation points from a member
@@ -46,15 +46,15 @@ class ReputationMembers(commands.Cog):
         RemoveReputationEmbed = discord.Embed(description=f"Vous venez de supprimer {amount} points de réputation à {selected_member.mention}", color=colorEmbed.Green)
         
         # * Check if the member exists
-        if await reputation_members.find_one({"_memberID": selected_member.id}) is None:
+        if await reputation_members.find_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id}) is None:
             await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
             return
         
         # * Remove the reputation points
-        reputation = await reputation_members.find_one({"_memberID": selected_member.id})
+        reputation = await reputation_members.find_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id})
         quantity = reputation["_reputationPoints"] # type: ignore
         quantity -= amount
-        await reputation_members.replace_one({"_memberID": selected_member.id}, {"_memberID": selected_member.id, "_reputationPoints": quantity})
+        await reputation_members.replace_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id}, {"_guildID": interaction.guild_id, "_memberID": selected_member.id, "_reputationPoints": quantity})
         await interaction.response.send_message(embed=RemoveReputationEmbed, ephemeral=False)
 
     # * Show the reputation points of a member (default is the author)
@@ -65,12 +65,12 @@ class ReputationMembers(commands.Cog):
         ErrorEmbed = discord.Embed(description=f"{selected_member.mention} ne possède pas de point!", color=colorEmbed.Red)
 
         # * Check if the member exists
-        if await reputation_members.find_one({"_memberID": selected_member.id}) is None:
+        if await reputation_members.find_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id}) is None:
             await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
             return
         
         # * Show the reputation points
-        reputation = await reputation_members.find_one({"_memberID": selected_member.id})
+        reputation = await reputation_members.find_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id})
         if reputation is not None:
             # * Create the embed
             ShowReputationEmbed = discord.Embed(description=f"{selected_member.mention} a {reputation['_reputationPoints']} points de réputation", color=colorEmbed.Yellow)

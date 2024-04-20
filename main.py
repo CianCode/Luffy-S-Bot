@@ -21,9 +21,13 @@ class CogManager(commands.Cog):
 
     async def load(self) -> None:
         for root, _, files in os.walk('./cogs'):
+            # * Skip the utils folder
             if 'utils' in root:
                 continue
             for filename in files:
+                # * Skip the files that start with __
+                if filename.startswith('__'):
+                    continue
                 if filename.endswith('.py'):
                     try:
                         path = os.path.join(root, filename)[len("./cogs/"):][:-3].replace(os.path.sep, '.')
