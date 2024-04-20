@@ -5,5 +5,5 @@ from discord.ext import commands
 
 from ..utils.database import reputation_members, reputation_roles
 
-async def update_reputation_role(member):
+async def update_reputation_role(guild, member):
     pass

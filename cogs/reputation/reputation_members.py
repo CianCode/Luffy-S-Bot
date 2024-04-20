@@ -9,6 +9,8 @@ from discord.ext import commands
 from ..utils.database import reputation_members
 from ..utils import colorEmbed
 
+from .__reputation_updater import update_reputation_role
+
 class ReputationMembers(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
