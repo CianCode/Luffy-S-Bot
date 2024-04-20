@@ -17,3 +17,4 @@ db = client['LuffyDB']
 # * Create the MongoDB collections
 reputation_roles = db['reputation_roles'] # ? Collection to store the reputation roles
 reputation_members = db['reputation_members'] # ? Collection to store the reputation of the users
+reputation_channels = db['reputation_channels'] # ? Collection to store the reputation channels

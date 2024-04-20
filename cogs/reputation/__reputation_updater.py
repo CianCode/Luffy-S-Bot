@@ -4,11 +4,12 @@ import discord
 from discord.ext import commands
 
 from ..utils import colorEmbed
-from ..utils.database import reputation_members, reputation_roles
+from ..utils.database import reputation_members, reputation_roles, reputation_channels
 
 async def update_reputation_role(guild, member):
     # * Fetch reputation points of the member from the database
     reputation_data = await reputation_members.find_one({"_guildID": guild.id, "_memberID": member.id})
+    reputation_channels_data = await reputation_channels.find_one({"_guildID": guild.id})
 
     if reputation_data is None:
         return
@@ -51,7 +52,15 @@ async def update_reputation_role(guild, member):
         if role:
             await member.add_roles(role)
             FelicitationEmbed = discord.Embed(description=f"Félicitations à {member.mention}, il a obtenu le rôle {role.mention}!", color=colorEmbed.Purple)
-            await guild.get_channel(1231283295212404756).send(embed=FelicitationEmbed)
+            if reputation_channels_data is None:
+                return
+
+            channel = guild.get_channel(reputation_channels_data["_channelID"])
+            if channel is None:
+                return
+            
+            await channel.send(embed=FelicitationEmbed)
+
 
     # Return the roles added and removed for logging or further processing
     return highest_role_id
