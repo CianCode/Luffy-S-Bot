@@ -5,8 +5,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from .utils import colorEmbed
-from .utils.database import reputation_channels
+from ..utils import colorEmbed
+from ..utils.database import reputation_channels
 
 class SetupChannel(commands.Cog):
     

@@ -55,7 +55,7 @@ async def update_reputation_role(guild, member):
         role = guild.get_role(highest_role_id)
         if role:
             await member.add_roles(role)
-            FelicitationEmbed = discord.Embed(description=f"Félicitations à {member.mention}, il a obtenu le rôle {role.mention}!", color=colorEmbed.Purple)
+            FelicitationEmbed = discord.Embed(description=f"Félicitations à {member.mention}, il a obtenu le rôle {role.mention}!", color=colorEmbed.Purple).set_author(name= member.display_name, icon_url= member.display_avatar)
             if reputation_channels_data is None:
                 return
 
