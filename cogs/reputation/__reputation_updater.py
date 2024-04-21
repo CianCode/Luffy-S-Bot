@@ -43,6 +43,10 @@ async def update_reputation_role(guild, member):
     # * Filter out the roles not related to the reputation_roles database
     filtered_roles = [role_id for role_id in current_roles if role_id in reputation_role_ids]
 
+    # * If member already has the highest role, do nothing
+    if highest_role_id in filtered_roles:
+        return None
+
     # * Remove all filtered roles from the member
     await member.remove_roles(*[guild.get_role(role_id) for role_id in filtered_roles])
 
