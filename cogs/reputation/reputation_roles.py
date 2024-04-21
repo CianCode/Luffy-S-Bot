@@ -57,6 +57,7 @@ class ReputationRoles(commands.Cog):
         
         # * Create the embed
         ErrorEmbed = discord.Embed(description="Il n'y a aucun rôle pour le moment", color=colorEmbed.Red)
+        ListEmbed = discord.Embed(title="Liste des rôles de réputation", color=colorEmbed.Purple)
 
         # * Get the roles
         roles = await reputation_roles.find({"_guildID": interaction.guild_id}).to_list(length=None)
@@ -65,6 +66,9 @@ class ReputationRoles(commands.Cog):
         if not roles:
             await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
             return
+
+        # * Sort roles by reputation points
+        roles.sort(key=lambda x: x["_reputationPoints"])
 
         # * Add the roles to the embed
         roles_info = ""
@@ -79,9 +83,9 @@ class ReputationRoles(commands.Cog):
             await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
             return
         
-        ListEmbed = discord.Embed(title="Liste des rôles de réputation", description=roles_info, color=colorEmbed.Purple)
+        ListEmbed.description = roles_info
 
-        # * Send the embed
+        # Send the embed
         await interaction.response.send_message(embed=ListEmbed, ephemeral=False)
 
 async def setup(bot):

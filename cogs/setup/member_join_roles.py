@@ -1,6 +1,7 @@
 # Description: This file is used to store roles id for the on_member_join event.
 
 # * Import the necessary libraries
+from uu import Error
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -43,6 +44,39 @@ class MemberJoinRoles(commands.Cog):
 
         await on_member_join_roles.delete_one({"_guildID": interaction.guild_id, "_roleID": selected_role.id})
         await interaction.response.send_message(embed=RemoveRolesEmbed, ephemeral=False)
+
+    # * List roles for new members
+    @app_commands.command(name="list_roles_members", description="Liste des rôles pour les nouveaux membres")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def list_roles_members(self, interaction: discord.Interaction):
+        # *Create the embed
+        ListRolesEmbed = discord.Embed(title="Liste des rôles pour les nouveaux membres", color=colorEmbed.Pink)
+        ErrorEmbed = discord.Embed(description="Il n'y a pas de rôles pour les nouveaux membres", color=colorEmbed.Red)
+        
+        if interaction.guild is not None:
+            roles = interaction.guild.roles
+        else:
+            roles = []
+
+        # * Filter out roles that are not in the database
+        roles_data = await on_member_join_roles.find({"_guildID": interaction.guild_id}).to_list(None)
+        role_ids = [role_data["_roleID"] for role_data in roles_data]
+
+        # * Sort roles by position in the role hierarchy in reverse order
+        roles = sorted(roles, key=lambda x: x.position, reverse=True)
+        roles = [role for role in roles if role.id in role_ids]
+
+        # * Check if there are roles
+        if len(roles) == 0:
+            await interaction.response.send_message(embed=ErrorEmbed, ephemeral=False)
+            return
+
+        # * Add the roles to the embed with spaces between them
+        role_mentions = "\n\n".join([role.mention for role in roles])
+        ListRolesEmbed.description = role_mentions
+
+        await interaction.response.send_message(embed=ListRolesEmbed, ephemeral=False)
+
 
     # * Add the roles to new members
     @commands.Cog.listener()
