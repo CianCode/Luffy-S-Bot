@@ -21,4 +21,3 @@ reputation_channels = db['reputation_channels'] # ? Collection to store the repu
 
 on_member_join_roles = db['on_member_join_roles'] # ? Collection to store the roles to be added when a member joins
 welcome_channels = db['welcome_channels'] # ? Collection to store the channels to send a message when a member joins
-welcome_banner = db['welcome_banner'] # ? Collection to store the background image for the welcome message
