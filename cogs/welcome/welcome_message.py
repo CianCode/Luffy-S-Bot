@@ -2,7 +2,6 @@
 
 # * Import the necessary libraries
 import discord
-from discord import File
 from discord.ext import commands
 from discord import app_commands
 
@@ -21,7 +20,7 @@ class WelcomeMessage(commands.Cog):
         # * Create the embed
         Embed = discord.Embed(
             description=f"Bienvenue {member.mention} monte à bord avec nous vèrs l'aventure!",
-            color=colorEmbed.Purple
+            color=colorEmbed.generate_random_color()
         ).set_author(
             name=member.guild.name,
             icon_url=member.display_avatar

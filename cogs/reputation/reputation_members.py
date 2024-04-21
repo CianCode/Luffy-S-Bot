@@ -97,17 +97,22 @@ class ReputationMembers(commands.Cog):
             return
 
         # * Sort the members by reputation points
-        members = sorted(members, key=lambda member: member["_reputationPoints"], reverse=True)
+        members = sorted(members, key=lambda member: member["_reputationPoints"], reverse=True)[:10]
 
         # * Create the embed
         LeaderboardEmbed = discord.Embed(title="Classement des membres avec le plus de points de réputation", color=colorEmbed.Yellow)
-        for i, member in enumerate(members):
-            member_id = member["_memberID"]
-            reputation_points = member["_reputationPoints"]
-            member = interaction.guild.get_member(member_id) # type: ignore
+        leaderboard_description = ""
+        for i, member_data in enumerate(members):
+            member_id = member_data["_memberID"]
+            reputation_points = member_data["_reputationPoints"]
+            member = interaction.guild.get_member(member_id)  # type: ignore
             if member:
-                LeaderboardEmbed.add_field(name=f"{i+1}. {member.display_name}", value=f"Points de réputation: {reputation_points}", inline=False)
-        
+                leaderboard_description += f"{i+1}. {member.mention}\n Points de réputation: {reputation_points}\n\n"
+            else:
+                leaderboard_description += f"{i+1}. Membre non trouvé (ID: {member_id}): \n Points de réputation: {reputation_points}\n\n"
+
+        LeaderboardEmbed.description = leaderboard_description
+
         await interaction.response.send_message(embed=LeaderboardEmbed, ephemeral=False)
         
 
