@@ -18,7 +18,7 @@ class ReputationMembers(commands.Cog):
 
     # * Add reputation points to a member
     @app_commands.command(name="reputation_add", description="Ajouter des points de réputation à un membre")
-    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def reputation_add(self, interaction: discord.Interaction, selected_member: discord.Member, amount: int):
 
         # * Create the embeds
@@ -42,7 +42,7 @@ class ReputationMembers(commands.Cog):
 
     # * Remove reputation points from a member
     @app_commands.command(name="reputation_remove", description="Supprimer des points de réputation à un membre")
-    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def reputation_remove(self, interaction: discord.Interaction, selected_member: discord.Member, amount: int):
 
         # * Create the embeds

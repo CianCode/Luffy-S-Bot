@@ -16,7 +16,7 @@ class ReputationRoles(commands.Cog):
 
     # * Add a role for a certain amount of reputation points
     @app_commands.command(name="role_add", description="Ajouter un rôle pour un certain nombre de points de réputation")
-    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def role_add(self, interaction: discord.Interaction, selected_role: discord.Role, amount: int):
 
         # * Create the embeds
@@ -34,7 +34,7 @@ class ReputationRoles(commands.Cog):
 
     # * Remove a role from the database
     @app_commands.command(name="role_remove", description="Supprimer un rôle pour un certain nombre de points de réputation")
-    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def role_remove(self, interaction: discord.Interaction, selected_role: discord.Role):
 
         # * Create the embeds
@@ -52,7 +52,7 @@ class ReputationRoles(commands.Cog):
 
     # * List all the roles in the database
     @app_commands.command(name="role_list", description="Lister tous les rôles pour un certain nombre de points de réputation")
-    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def role_list(self, interaction: discord.Interaction):
         
         # * Create the embed

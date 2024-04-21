@@ -15,7 +15,7 @@ class MemberJoinRoles(commands.Cog):
 
     # * Add roles to database
     @app_commands.command(name="add_roles_members", description="Ajouter des rôles à un membre lorsqu'il rejoint le serveur")
-    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def add_roles_members(self, interaction: discord.Interaction, selected_role: discord.Role):
         # * Create the embeds
         AddRolesEmbed = discord.Embed(description=f"Le rôle {selected_role.mention} a été ajouté à la liste des rôles pour les nouveaux membres", color=colorEmbed.Green)
@@ -31,7 +31,7 @@ class MemberJoinRoles(commands.Cog):
 
     # * Remove roles from database
     @app_commands.command(name="remove_roles_members", description="Supprimer des rôles à un membre lorsqu'il rejoint le serveur")
-    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def remove_roles_members(self, interaction: discord.Interaction, selected_role: discord.Role):
         # * Create the embeds
         ErrorEmbed = discord.Embed(description=f"Le rôle {selected_role.mention} n'est pas dans la liste des rôles pour les nouveaux membres", color=colorEmbed.Red)
@@ -47,7 +47,7 @@ class MemberJoinRoles(commands.Cog):
 
     # * List roles for new members
     @app_commands.command(name="list_roles_members", description="Liste des rôles pour les nouveaux membres")
-    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def list_roles_members(self, interaction: discord.Interaction):
         # *Create the embed
         ListRolesEmbed = discord.Embed(title="Liste des rôles pour les nouveaux membres", color=colorEmbed.Pink)
