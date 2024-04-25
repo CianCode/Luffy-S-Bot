@@ -68,7 +68,7 @@ class ReputationRoles(commands.Cog):
             return
 
         # * Sort roles by reputation points
-        roles.sort(key=lambda x: x["_reputationPoints"])
+        roles.sort(key=lambda x: x["_reputationPoints"], reverse=True)
 
         # * Add the roles to the embed
         roles_info = ""

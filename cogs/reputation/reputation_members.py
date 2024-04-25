@@ -28,7 +28,7 @@ class ReputationMembers(commands.Cog):
         # * Check if the member already exists
         if await reputation_members.find_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id}) is None:
             await reputation_members.insert_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id, "_reputationPoints": amount})
-            await update_reputation_role(interaction.guild, selected_member)
+            await update_reputation_role(interaction.guild, selected_member, "add")
             await interaction.response.send_message(embed=CreateMembersEmbed, ephemeral=False)
             return
         
@@ -37,7 +37,7 @@ class ReputationMembers(commands.Cog):
         quantity = reputation["_reputationPoints"] # type: ignore
         quantity += amount
         await reputation_members.replace_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id}, {"_guildID": interaction.guild_id, "_memberID": selected_member.id, "_reputationPoints": quantity})
-        await update_reputation_role(interaction.guild, selected_member)
+        await update_reputation_role(interaction.guild, selected_member, "add")
         await interaction.response.send_message(embed=AddReputationEmbed, ephemeral=False)
 
     # * Remove reputation points from a member
@@ -59,7 +59,7 @@ class ReputationMembers(commands.Cog):
         quantity = reputation["_reputationPoints"] # type: ignore
         quantity -= amount
         await reputation_members.replace_one({"_guildID": interaction.guild_id, "_memberID": selected_member.id}, {"_guildID": interaction.guild_id, "_memberID": selected_member.id, "_reputationPoints": quantity})
-        highestRole = await update_reputation_role(interaction.guild, selected_member)
+        highestRole = await update_reputation_role(interaction.guild, selected_member, "remove")
         await interaction.response.send_message(embed=RemoveReputationEmbed, ephemeral=False)
 
     # * Show the reputation points of a member (default is the author)

@@ -10,7 +10,7 @@ Blue = 0x91bfff
 Yellow = 0xfff691
 Orange = 0xffb391
 Purple = 0xd391ff
-Pink = 0xff91f2
+Pink = 0xff91f2 
 
 # * Define the colors as a dictionary
 colors = {

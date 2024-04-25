@@ -19,5 +19,7 @@ reputation_roles = db['reputation_roles'] # ? Collection to store the reputation
 reputation_members = db['reputation_members'] # ? Collection to store the reputation of the users
 reputation_channels = db['reputation_channels'] # ? Collection to store the reputation channels
 
+reputation_forum = db['reputation_forum'] # ? Collection to store the reputation forum
+
 on_member_join_roles = db['on_member_join_roles'] # ? Collection to store the roles to be added when a member joins
 welcome_channels = db['welcome_channels'] # ? Collection to store the channels to send a message when a member joins

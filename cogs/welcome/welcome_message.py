@@ -3,7 +3,6 @@
 # * Import the necessary libraries
 import discord
 from discord.ext import commands
-from discord import app_commands
 
 from ..utils import colorEmbed
 from ..utils.database import welcome_channels
@@ -23,10 +22,10 @@ class WelcomeMessage(commands.Cog):
             color=colorEmbed.generate_random_color()
         ).set_author(
             name=member.guild.name,
-            icon_url=member.display_avatar
+            icon_url=member.guild.icon.url
         ).set_footer(
             text=f"ID: {member.id}",
-            icon_url=member.guild.icon.url
+            icon_url=member.display_avatar
         )
 
         # * Get the welcome channel
