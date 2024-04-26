@@ -1,6 +1,5 @@
 # Description: Updates the role of the player based on the reputation points and database role
 
-from os import remove
 import discord
 from discord.ext import commands
 
@@ -69,6 +68,15 @@ async def update_reputation_role(guild, member, action):
                 removedRole = guild.get_role(filtered_roles[0])
                 RemoveEmbed = discord.Embed(description=f"{member.mention} a perdu sont role {removedRole.mention} et a reçu le role {role.mention}!", color=colorEmbed.Purple).set_author(name= member.display_name, icon_url= member.display_avatar)
                 await channel.send(embed=RemoveEmbed)
+    if action == "remove" and highest_role_id is None and filtered_roles[0] is not None:
+        if reputation_channels_data is None:
+            return
+        channel = guild.get_channel(reputation_channels_data["_channelID"])
+        if channel is None:
+            return
+        removedRole = guild.get_role(filtered_roles[0])
+        RemoveOnlyEmbed = discord.Embed(description=f"{member.mention} a perdu sont role {removedRole.mention}!", color=colorEmbed.Purple).set_author(name= member.display_name, icon_url= member.display_avatar)
+        await channel.send(embed=RemoveOnlyEmbed)
 
     # Return the roles added and removed for logging or further processing
     return highest_role_id

@@ -23,3 +23,5 @@ reputation_forum = db['reputation_forum'] # ? Collection to store the reputation
 
 on_member_join_roles = db['on_member_join_roles'] # ? Collection to store the roles to be added when a member joins
 welcome_channels = db['welcome_channels'] # ? Collection to store the channels to send a message when a member joins
+
+role_self_select = db['role_self_select'] # ? Collection to store the roles that can be selected by the members

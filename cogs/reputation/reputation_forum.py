@@ -1,7 +1,6 @@
 # Description: Add reputation points to a member
 
 # * Import the necessary discord libraries
-from uu import Error
 import discord
 from discord import app_commands
 from discord.ext import commands
