@@ -52,7 +52,6 @@ class ReputationRoles(commands.Cog):
 
     # * List all the roles in the database
     @app_commands.command(name="role_list", description="Lister tous les rôles pour un certain nombre de points de réputation")
-    @app_commands.checks.has_permissions(manage_guild=True)
     async def role_list(self, interaction: discord.Interaction):
         
         # * Create the embed
