@@ -20,6 +20,11 @@ class ReputationForumView(discord.ui.Select):
         # * Get the selected member
         selected_member_id = interaction.data['values'][0]
         selected_member_id = int(selected_member_id)
+
+        # * Check if the guild exists
+        if interaction.guild is None:
+            return
+
         member = interaction.guild.get_member(selected_member_id)
 
         # * Check if the member exists in the database
@@ -30,7 +35,7 @@ class ReputationForumView(discord.ui.Select):
             await reputation_members.insert_one({"_guildID": interaction.guild_id, "_memberID": member.id, "_reputationPoints": 0})
 
         # * Add reputation points to the selected member
-        reputation_add = 100
+        reputation_add = 10
 
         # * Update the reputation points
         await reputation_members.update_one({"_guildID": interaction.guild_id, "_memberID": selected_member_id}, {"$inc": {"_reputationPoints": reputation_add}})
