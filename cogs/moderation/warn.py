@@ -6,55 +6,54 @@ from discord import app_commands
 from discord.ext import commands
 
 # * Import the necessary libraries
+from bson import ObjectId
 from ..utils import colorEmbed
 from ..utils.database import warn_members
 
-class WarnViewDelete(discord.ui.View):
+class WarnViewDelete(discord.ui.Select):
     def __init__(self, bot, options, max):
-        super().__init__(placeholder='Select a warn!', options=options, min_values=1, max_values=max)
+        super().__init__(placeholder='Selectionner un warn!', options=options, min_values=1, max_values=max)
         self.bot = bot
 
     async def callback(self, interaction: discord.Interaction):
-        # * Create the embeds
-        SuccesEmbed = discord.Embed(description="The warns have been removed", color=colorEmbed.Green)
+        # Create the embed
+        SuccessEmbed = discord.Embed(description="Le warn a été supprimer", color=colorEmbed.Green)
 
-        # * Get the selected warns
+        # Get the selected warns
         selected_warns = interaction.data['values']
 
-        # * Remove the selected warns
+        # Remove the selected warns
         for warn in selected_warns:
-            await warn_members.delete_one({"_id": int(warn)})
+            await warn_members.delete_one({"_id": ObjectId(warn)})
 
-        # * Create the embed
-        SuccesEmbed = discord.Embed(description="The warns have been removed", color=colorEmbed.Green)
-        await interaction.response.send_message(embed=SuccesEmbed, ephemeral=False)
+        await interaction.response.send_message(embed=SuccessEmbed, ephemeral=False)
 
 class WarnSystem(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @app_commands.command(name="warn", description="Warn a member")
-    @commands.has_permissions(manage_members=True)
+    @commands.has_permissions(moderate_members=True)
     async def warn(self, interaction: discord.Interaction, member: discord.Member, reason: str):
-        # * Create the embeds
-        ErrorEmbed = discord.Embed(description="You can't warn yourself or a bot!", color=colorEmbed.Red)
-        SuccesEmbed = discord.Embed(description=f"{member.mention} has been warned for {reason}", color=colorEmbed.Green)
+        # Create the embeds
+        ErrorEmbed = discord.Embed(description="Tu ne peux pas te warn toi même ou un bot!", color=colorEmbed.Red)
+        SuccessEmbed = discord.Embed(description=f"{member.mention} a été warn pour la raison suivante > {reason}", color=colorEmbed.Green)
 
-        # * Check if the member is the bot
-        if member == interaction.guild.me:
+        # Check if the member is the bot
+        if member.id == interaction.user.id or member.bot:
             await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
             return
 
-        # * Add the warn
+        # Add the warn
         await warn_members.insert_one({"_guildID": interaction.guild_id, "_memberID": member.id, "_reason": reason})
-        await interaction.response.send_message(embed=SuccesEmbed, ephemeral=False)
+        await interaction.response.send_message(embed=SuccessEmbed, ephemeral=False)
 
-    @app_commands.command(name="warns_remove", description="Remove members warns")
-    @commands.has_permissions(manage_members=True)
+    @app_commands.command(name="warns_remove", description="Supprime un warn d'un membre")
+    @commands.has_permissions(moderate_members=True)
     async def warns_remove(self, interaction: discord.Interaction, member: discord.Member):
         # * Create the embeds
-        AskEmbed = discord.Embed(description=f"Wich warn from {member.mention} do you want to delete?", color=colorEmbed.Purple)
-        ErrorEmbed = discord.Embed(description=f"{member.mention} has no warns!", color=colorEmbed.Red)
+        AskEmbed = discord.Embed(description=f"Quelles sont les warn de {member.mention} voullez vous supprimer ?", color=colorEmbed.Purple)
+        ErrorEmbed = discord.Embed(description=f"{member.mention} ne possède pas de warn. Quelle membre exemplaire!", color=colorEmbed.Red)
 
         # * Check if the member has any warns
         if not await warn_members.find_one({"_guildID": interaction.guild_id, "_memberID": member.id}):
@@ -68,8 +67,34 @@ class WarnSystem(commands.Cog):
         ]
 
         # * Create the view
-        view = WarnViewDelete(self.bot, options, len(options))
+        select = WarnViewDelete(self.bot, options, len(options))
+        view = discord.ui.View()
+        view.add_item(select)
+
         await interaction.response.send_message(embed=AskEmbed, view=view, ephemeral=True)
+
+    # * Affiche tout les warn du membre mentionné
+    @app_commands.command(name="warns_list", description="Liste tout les warn d'un membre")
+    @commands.has_permissions(moderate_members=True)
+    async def warns_list(self, interaction: discord.Interaction, member: discord.Member):
+        # * Create the embeds
+        ErrorEmbed = discord.Embed(description=f"{member.mention} ne possède pas de warn. Quelle membre exemplaire!", color=colorEmbed.Red)
+        ListEmbed = discord.Embed(title=f"Liste des warn de {member.display_name}", color=colorEmbed.Purple)
+
+        # * Get the warns
+        warns = await warn_members.find({"_guildID": interaction.guild_id, "_memberID": member.id}).to_list(length=None)
+
+        # * Check if the member has any warns
+        if not warns:
+            await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
+            return
+
+        # * Add the warns to the embed
+        for warn in warns:
+            ListEmbed.add_field(name=f"Warn ID: {warn['_id']}", value=f"Raison: {warn['_reason']}", inline=False)
+
+        await interaction.response.send_message(embed=ListEmbed, ephemeral=True)
+
         
 
 
