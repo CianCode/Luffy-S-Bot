@@ -25,8 +25,7 @@ class Forum(commands.Cog):
 
         # * Create the embed
         ForumCreatedEmbed = discord.Embed(description="Le forum a été créé avec succès!", color=colorEmbed.Green)
-        ErrorNameEmbed = discord.Embed(description="Le nom du canal ne peut être que en minuscule et sans espace et a don été modifier pour suivre les règlementations !", color=colorEmbed.Red)
-
+        
         # * Check if guild exists
         if not interaction.guild:
             return
