@@ -35,17 +35,21 @@ class WarnSystem(commands.Cog):
     @app_commands.command(name="warn", description="Warn a member")
     @commands.has_permissions(moderate_members=True)
     async def warn(self, interaction: discord.Interaction, member: discord.Member, reason: str):
-        # Create the embeds
+        # * Create the embeds
         ErrorEmbed = discord.Embed(description="Tu ne peux pas te warn toi même ou un bot!", color=colorEmbed.Red)
         SuccessEmbed = discord.Embed(description=f"{member.mention} a été warn pour la raison suivante > {reason}", color=colorEmbed.Green)
 
-        # Check if the member is the bot
+        # * Check if the member is the bot
         if member.id == interaction.user.id or member.bot:
             await interaction.response.send_message(embed=ErrorEmbed, ephemeral=True)
             return
+        
+        # * Get the time of the warn and the date of the warn (The time need to have only the date, hours and minutes)
+        time = interaction.created_at
+        time = time.strftime("%d/%m/%Y - %H:%M")
 
-        # Add the warn
-        await warn_members.insert_one({"_guildID": interaction.guild_id, "_memberID": member.id, "_reason": reason})
+        # * Add the warn
+        await warn_members.insert_one({"_guildID": interaction.guild_id, "_memberID": member.id, "_reason": reason, "_time": time})
         await interaction.response.send_message(embed=SuccessEmbed, ephemeral=False)
 
     @app_commands.command(name="warns_remove", description="Supprime un warn d'un membre")
@@ -62,7 +66,7 @@ class WarnSystem(commands.Cog):
         
         # * Create the options with all the warns of a member
         options = [
-            discord.SelectOption(label=f"{warn['_reason']}", value=f"{warn['_id']}")
+            discord.SelectOption(label=f"{warn['_reason']}", value=f"{warn['_id']}", description=f"Date / Heure du warn: {warn['_time']}")
             for warn in await warn_members.find({"_guildID": interaction.guild_id, "_memberID": member.id}).to_list(length=None)
         ]
 
@@ -91,7 +95,7 @@ class WarnSystem(commands.Cog):
 
         # * Add the warns to the embed
         for warn in warns:
-            ListEmbed.add_field(name=f"Warn ID: {warn['_id']}", value=f"Raison: {warn['_reason']}", inline=False)
+            ListEmbed.add_field(name=f"Date / Heure du warn: {warn['_time']}", value=f"Raison: {warn['_reason']}", inline=False)
 
         await interaction.response.send_message(embed=ListEmbed, ephemeral=True)
 
