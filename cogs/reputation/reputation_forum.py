@@ -108,8 +108,8 @@ class ReputationForum(commands.Cog):
             await interaction.response.send_message(embed=ErrorThreadDtabaseEmbed, ephemeral=True)
             return
         
-        # * Check if the author id is different from the channel owner id
-        if author_id != interaction.channel.owner_id or interaction.user.guild_permissions.administrator == False :
+        # * Chack that if the memeber interaction is different from the author or he is not an admin
+        if author_id != interaction.channel.owner_id and not interaction.user.guild_permissions.administrator:
             await interaction.response.send_message(embed=ErrorPermissionEmbed, ephemeral=True)
             return
 
